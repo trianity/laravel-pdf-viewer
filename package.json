@@ -1,0 +1,8 @@
+{
+    "name": "@trianity/laravel-pdf-viewer",
+    "private": true,
+    "type": "module",
+    "peerDependencies": {
+        "pdfjs-dist": "^5.0"
+    }
+}

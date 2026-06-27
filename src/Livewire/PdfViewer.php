@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Trianity\LaravelPdfViewer\Livewire;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\URL;
 use Livewire\Component;
 
@@ -36,8 +37,8 @@ final class PdfViewer extends Component
         );
     }
 
-    public function render()
+    public function render(): View
     {
-        return view('pdf-viewer::livewire.viewer');
+        return view()->file(__DIR__.'/../../resources/views/livewire/viewer.blade.php');
     }
 }

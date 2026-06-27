@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+declare(strict_types=1);
+
+use Trianity\LaravelPdfViewer\Tests\TestCase;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,7 +16,6 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
- // ->use(RefreshDatabase::class)
     ->in('Feature');
 
 /*
@@ -29,9 +29,7 @@ pest()->extend(TestCase::class)
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+// Custom expectations may be registered here.
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +42,4 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
-{
-    // ..
-}
+// Project-specific helper functions may be registered here.

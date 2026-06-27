@@ -12,3 +12,11 @@ test('component renders signed url', function () {
         ->assertSee('/pdf-viewer/documents/document-1', false)
         ->assertSee('signature=', false);
 });
+
+test('component sanitizes unsafe height values', function () {
+    Livewire::test(PdfViewer::class, [
+        'documentId' => 'document-1',
+        'height' => '1px; background: red',
+    ])
+        ->assertSet('height', '70vh');
+});

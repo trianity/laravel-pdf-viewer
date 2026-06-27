@@ -40,6 +40,15 @@ test('non pdf mime is rejected', function () {
     get(signedUrl('document-1'))->assertStatus(415);
 });
 
+test('authorization callback can reject stream access', function () {
+    config()->set('pdf-viewer.authorize', fn (): bool => false);
+    Storage::fake('pdfs');
+    Storage::disk('pdfs')->put('document.pdf', pdfContent());
+    bindResolver(new PdfDocument('pdfs', 'document.pdf', 'document.pdf', 'application/pdf'));
+
+    get(signedUrl('document-1'))->assertForbidden();
+});
+
 test('valid pdf streams successfully', function () {
     Storage::fake('pdfs');
     Storage::disk('pdfs')->put('unsafe.pdf', pdfContent());

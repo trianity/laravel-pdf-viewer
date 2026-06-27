@@ -27,7 +27,7 @@ final class PdfViewer extends Component
         bool $showToolbar = true,
     ): void {
         $this->documentId = $documentId;
-        $this->height = $height;
+        $this->height = $this->sanitizeHeight($height);
         $this->initialPage = max(1, $initialPage);
         $this->showToolbar = $showToolbar;
         $this->streamUrl = URL::temporarySignedRoute(
@@ -40,5 +40,16 @@ final class PdfViewer extends Component
     public function render(): View
     {
         return view()->file(__DIR__.'/../../resources/views/livewire/viewer.blade.php');
+    }
+
+    private function sanitizeHeight(string $height): string
+    {
+        $height = trim($height);
+
+        if (preg_match('/^\d+(?:\.\d+)?(?:px|rem|em|vh|vw|vmin|vmax|%)$/', $height) === 1) {
+            return $height;
+        }
+
+        return '70vh';
     }
 }

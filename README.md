@@ -77,6 +77,8 @@ You can also render the Livewire component directly:
 <livewire:pdf-viewer document-id="invoice-123" height="75vh" />
 ```
 
+The `height` option accepts simple CSS length values such as `600px`, `40rem`, `75vh` or `100%`. Invalid values fall back to `70vh`.
+
 ## Authorization
 
 Configure `config/pdf-viewer.php` with either a Gate ability or an authorization callback. The callback receives the request, document ID and resolved `PdfDocument`.
@@ -99,3 +101,4 @@ or:
 - Missing files return 404.
 - Non-PDF MIME types are rejected.
 - Stream responses set `Content-Type: application/pdf`, `X-Content-Type-Options: nosniff` and inline `Content-Disposition`.
+- Filenames are sanitized before being written to response headers.

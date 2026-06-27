@@ -6,15 +6,25 @@ This package provides a reusable PDF viewer component without relying on WordPre
 
 ## Features
 
-- PDF.js based rendering
-- Laravel signed route support
-- document ID based loading
-- Livewire 4 component
-- Tailwind CSS 4 friendly markup
-- previous / next page navigation
-- zoom controls
-- responsive toolbar
-- no arbitrary remote PDF URL loading
+* PDF.js based rendering
+* Laravel signed route support
+* Document ID based loading
+* Livewire 4 component
+* Tailwind CSS 4 friendly markup
+* Previous / next page navigation
+* Zoom controls
+* Responsive toolbar
+* No arbitrary remote PDF URL loading
+* No `/pdf?url=...` style API
+
+## Requirements
+
+* PHP 8.3+
+* Laravel 13+
+* Livewire 4+
+* Tailwind CSS 4 compatible frontend
+* Vite
+* `pdfjs-dist`
 
 ## Installation
 
@@ -23,22 +33,65 @@ composer require trianity/laravel-pdf-viewer
 npm install pdfjs-dist
 ```
 
-Publish configuration and assets when you need to customize them:
+Publish the configuration when you need to customize the package:
 
 ```bash
 php artisan vendor:publish --tag=pdf-viewer-config
+```
+
+Publish the viewer asset when you want to include or customize the JavaScript entry manually:
+
+```bash
 php artisan vendor:publish --tag=pdf-viewer-assets
 ```
 
-Import the viewer asset from your Vite entrypoint:
+Import the viewer asset from your Vite entrypoint.
+
+For example, if the published asset is located at `resources/js/vendor/pdf-viewer.js`:
 
 ```js
 import './vendor/pdf-viewer.js';
 ```
 
+Then rebuild your frontend assets:
+
+```bash
+npm run build
+```
+
+## Configuration
+
+The package configuration is published to:
+
+```txt
+config/pdf-viewer.php
+```
+
+Important options include:
+
+```php
+return [
+    'route_prefix' => 'pdf-viewer',
+
+    'route_name' => 'pdf-viewer.',
+
+    'middleware' => ['web', 'signed'],
+
+    'signed_url_ttl' => 10,
+
+    'gate' => null,
+
+    'authorize' => null,
+];
+```
+
+Use either a Gate ability or an authorization callback when your application needs explicit access control.
+
 ## Resolver
 
-The package never accepts arbitrary PDF URLs. Bind `PdfDocumentResolver` in your application and resolve trusted document IDs to storage metadata:
+The package never accepts arbitrary PDF URLs.
+
+Instead, bind `PdfDocumentResolver` in your application and resolve trusted document IDs to storage metadata:
 
 ```php
 use Trianity\LaravelPdfViewer\Contracts\PdfDocumentResolver;
@@ -60,7 +113,11 @@ $this->app->bind(PdfDocumentResolver::class, function () {
 });
 ```
 
+A typical application resolver may query an Eloquent model, check ownership or tenancy boundaries, and then return the storage disk, path, safe filename and MIME type.
+
 ## Usage
+
+Use the Blade component:
 
 ```blade
 <x-pdf-viewer::viewer
@@ -77,28 +134,82 @@ You can also render the Livewire component directly:
 <livewire:pdf-viewer document-id="invoice-123" height="75vh" />
 ```
 
-The `height` option accepts simple CSS length values such as `600px`, `40rem`, `75vh` or `100%`. Invalid values fall back to `70vh`.
+The `height` option accepts simple CSS length values such as:
+
+```txt
+600px
+40rem
+75vh
+100%
+```
+
+Invalid values fall back to `70vh`.
 
 ## Authorization
 
-Configure `config/pdf-viewer.php` with either a Gate ability or an authorization callback. The callback receives the request, document ID and resolved `PdfDocument`.
+Configure `config/pdf-viewer.php` with either a Gate ability or an authorization callback.
+
+Using a Gate ability:
 
 ```php
-'gate' => 'view-pdf-document',
+'gate' => 'viewPdfDocument',
 ```
 
-or:
+Using an authorization callback:
 
 ```php
-'authorize' => fn ($request, string $documentId, $document) => $request->user()?->can('view', $documentId),
+'authorize' => fn ($request, string $documentId, $document) => $request->user()?->can('viewPdfDocument', $document),
 ```
+
+The callback receives the resolved PdfDocument, so your application can authorize access using your own Gate, Policy, tenancy or ownership rules.
+
+If neither gate nor authorize is configured, the package assumes that your resolver only returns documents that the current request is allowed to access.
 
 ## Security Model
 
-- Documents are streamed only through temporary signed Laravel routes.
-- Stream requests use document IDs, not remote URLs.
-- The resolver must return disk, path, filename and MIME type.
-- Missing files return 404.
-- Non-PDF MIME types are rejected.
-- Stream responses set `Content-Type: application/pdf`, `X-Content-Type-Options: nosniff` and inline `Content-Disposition`.
-- Filenames are sanitized before being written to response headers.
+* Documents are streamed only through temporary signed Laravel routes.
+* Stream requests use document IDs, not remote URLs.
+* The package does not provide arbitrary remote PDF proxying.
+* The resolver must return disk, path, filename and MIME type.
+* Missing files return 404.
+* Non-PDF MIME types are rejected.
+* Stream responses set:
+
+  * `Content-Type: application/pdf`
+  * `X-Content-Type-Options: nosniff`
+  * inline `Content-Disposition`
+* Filenames are sanitized before being written to response headers.
+* Host applications remain responsible for document ownership, tenancy and business-level authorization.
+
+## Testing
+
+The package uses Pest, Orchestra Testbench, Laravel Pint and Larastan.
+
+```bash
+composer format
+composer analyse
+composer test
+composer quality
+```
+
+The quality command runs formatting, static analysis and the test suite.
+
+## Versioning
+
+This package follows semantic versioning.
+
+The current Light/free version focuses on a secure PDF.js based viewer.
+
+The following features are intentionally not included in the first release:
+
+* Flipbook animation
+* Thumbnail sidebar
+* PDF text search
+* Annotations
+* Watermarking
+* Analytics
+* Pro/commercial features
+
+## License
+
+The MIT License.

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Trianity\LaravelPdfViewer\Tests;
 
-use Orchestra\Testbench\TestCase as Orchestra;
 use Livewire\LivewireServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 use Trianity\LaravelPdfViewer\PdfViewerServiceProvider;
 
 abstract class TestCase extends Orchestra

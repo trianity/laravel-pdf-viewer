@@ -13,8 +13,7 @@ final class FakePdfDocumentResolver implements PdfDocumentResolver
 
     public function __construct(
         private readonly ?PdfDocument $document,
-    ) {
-    }
+    ) {}
 
     public function resolve(string $documentId): ?PdfDocument
     {

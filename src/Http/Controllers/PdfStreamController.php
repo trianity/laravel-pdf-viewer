@@ -32,7 +32,7 @@ final class PdfStreamController extends Controller
         }, 200, [
             'Content-Type' => 'application/pdf',
             'X-Content-Type-Options' => 'nosniff',
-            'Content-Disposition' => 'inline; filename="' . $this->safeFilename($pdf->filename) . '"',
+            'Content-Disposition' => 'inline; filename="'.$this->safeFilename($pdf->filename).'"',
         ]);
     }
 
@@ -68,6 +68,6 @@ final class PdfStreamController extends Controller
             return 'document.pdf';
         }
 
-        return str_ends_with(strtolower($filename), '.pdf') ? $filename : $filename . '.pdf';
+        return str_ends_with(strtolower($filename), '.pdf') ? $filename : $filename.'.pdf';
     }
 }

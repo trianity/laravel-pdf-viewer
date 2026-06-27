@@ -11,6 +11,5 @@ final readonly class PdfDocument
         public string $path,
         public string $filename,
         public string $mime,
-    ) {
-    }
+    ) {}
 }

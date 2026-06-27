@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+
+use function Pest\Laravel\get;
+
 use Trianity\LaravelPdfViewer\Contracts\PdfDocumentResolver;
 use Trianity\LaravelPdfViewer\Data\PdfDocument;
 use Trianity\LaravelPdfViewer\Tests\Fixtures\FakePdfDocumentResolver;
 
 test('signed route rejects unsigned requests', function () {
-    $this->get('/pdf-viewer/documents/document-1')->assertForbidden();
+    get('/pdf-viewer/documents/document-1')->assertForbidden();
 });
 
 test('resolver is called', function () {
@@ -17,7 +20,7 @@ test('resolver is called', function () {
     Storage::disk('pdfs')->put('document.pdf', pdfContent());
     $resolver = bindResolver(new PdfDocument('pdfs', 'document.pdf', 'document.pdf', 'application/pdf'));
 
-    $this->get(signedUrl('document-1'))->assertOk();
+    get(signedUrl('document-1'))->assertOk();
 
     expect($resolver->calls)->toBe(1);
 });
@@ -26,7 +29,7 @@ test('missing file returns 404', function () {
     Storage::fake('pdfs');
     bindResolver(new PdfDocument('pdfs', 'missing.pdf', 'missing.pdf', 'application/pdf'));
 
-    $this->get(signedUrl('missing-document'))->assertNotFound();
+    get(signedUrl('missing-document'))->assertNotFound();
 });
 
 test('non pdf mime is rejected', function () {
@@ -34,7 +37,7 @@ test('non pdf mime is rejected', function () {
     Storage::disk('pdfs')->put('document.txt', 'not a pdf');
     bindResolver(new PdfDocument('pdfs', 'document.txt', 'document.txt', 'text/plain'));
 
-    $this->get(signedUrl('document-1'))->assertStatus(415);
+    get(signedUrl('document-1'))->assertStatus(415);
 });
 
 test('valid pdf streams successfully', function () {
@@ -42,7 +45,7 @@ test('valid pdf streams successfully', function () {
     Storage::disk('pdfs')->put('unsafe.pdf', pdfContent());
     bindResolver(new PdfDocument('pdfs', 'unsafe.pdf', '../unsafe name.pdf', 'application/pdf'));
 
-    $response = $this->get(signedUrl('document-1'));
+    $response = get(signedUrl('document-1'));
 
     $response->assertOk();
     $response->assertHeader('Content-Type', 'application/pdf');

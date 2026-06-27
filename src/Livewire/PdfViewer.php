@@ -18,6 +18,8 @@ final class PdfViewer extends Component
 
     public bool $showToolbar = true;
 
+    public string $theme = 'auto';
+
     public string $streamUrl = '';
 
     public function mount(
@@ -25,11 +27,13 @@ final class PdfViewer extends Component
         string $height = '70vh',
         int $initialPage = 1,
         bool $showToolbar = true,
+        string $theme = 'auto',
     ): void {
         $this->documentId = $documentId;
         $this->height = $this->sanitizeHeight($height);
         $this->initialPage = max(1, $initialPage);
         $this->showToolbar = $showToolbar;
+        $this->theme = $this->sanitizeTheme($theme);
         $this->streamUrl = URL::temporarySignedRoute(
             (string) config('pdf-viewer.route_name', 'pdf-viewer.stream'),
             now()->addMinutes((int) config('pdf-viewer.signature_expires_in', 5)),
@@ -51,5 +55,16 @@ final class PdfViewer extends Component
         }
 
         return '70vh';
+    }
+
+    private function sanitizeTheme(string $theme): string
+    {
+        $theme = trim($theme);
+
+        if (in_array($theme, ['auto', 'light', 'dark', 'soft'], true)) {
+            return $theme;
+        }
+
+        return 'auto';
     }
 }

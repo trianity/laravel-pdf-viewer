@@ -123,6 +123,7 @@ Use the Blade component:
 <x-pdf-viewer::viewer
     document-id="invoice-123"
     height="75vh"
+    theme="soft"
     :initial-page="1"
     :show-toolbar="true"
 />
@@ -144,6 +145,19 @@ The `height` option accepts simple CSS length values such as:
 ```
 
 Invalid values fall back to `70vh`.
+
+### Viewer theme
+
+The `theme` option controls only the viewer interface and toolbar. It does not change, invert or recolor the rendered PDF page.
+
+Supported values:
+
+* `auto` - default; follows the host application's light/dark mode through Tailwind `dark:` variants.
+* `light` - always uses a light toolbar/interface.
+* `dark` - always uses a dark toolbar/interface.
+* `soft` - uses a subtle translucent light interface for light or pastel page backgrounds.
+
+Invalid values fall back to `auto`.
 
 ## Authorization
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.1 - Viewer Theme Option
+
+### Added
+
+- Explicit `auto`, `light`, `dark` and `soft` viewer interface themes.
+- Stable `data-pdf-viewer-theme` attribute for debugging and tests.
+
 ## v0.1.0 - Initial Light Release
 
 ### Added

@@ -1,16 +1,40 @@
+@php
+    $toolbarClasses = match ($theme) {
+        'light' => 'flex h-12 items-center gap-2 border-b border-neutral-200 bg-white px-3 text-neutral-900',
+        'dark' => 'flex h-12 items-center gap-2 border-b border-white/10 bg-neutral-950 px-3 text-neutral-100',
+        'soft' => 'flex h-12 items-center gap-2 border-b border-slate-200/70 bg-white/75 px-3 text-slate-800 backdrop-blur',
+        default => 'flex h-12 items-center gap-2 border-b border-neutral-200 bg-neutral-50 px-3 text-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100',
+    };
+
+    $buttonClasses = match ($theme) {
+        'light' => 'inline-flex h-8 w-8 items-center justify-center rounded border border-neutral-300 bg-white text-sm text-neutral-900 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40',
+        'dark' => 'inline-flex h-8 w-8 items-center justify-center rounded border border-white/15 bg-white/10 text-sm text-neutral-100 hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40',
+        'soft' => 'inline-flex h-8 w-8 items-center justify-center rounded border border-slate-300/80 bg-white/80 text-sm text-slate-800 hover:bg-white disabled:cursor-not-allowed disabled:opacity-40',
+        default => 'inline-flex h-8 w-8 items-center justify-center rounded border border-neutral-300 bg-white text-sm text-neutral-900 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/10 dark:text-neutral-100 dark:hover:bg-white/15',
+    };
+
+    $pageCountClasses = match ($theme) {
+        'light' => 'min-w-24 text-center text-sm tabular-nums text-neutral-700',
+        'dark' => 'min-w-24 text-center text-sm tabular-nums text-neutral-200',
+        'soft' => 'min-w-24 text-center text-sm tabular-nums text-slate-700',
+        default => 'min-w-24 text-center text-sm tabular-nums text-neutral-700 dark:text-neutral-200',
+    };
+@endphp
+
 <div
     class="w-full overflow-hidden rounded border border-neutral-200 bg-white text-neutral-900 shadow-sm"
     data-pdf-viewer
+    data-pdf-viewer-theme="{{ $theme }}"
     data-pdf-url="{{ $streamUrl }}"
     data-initial-page="{{ $initialPage }}"
     style="height: {{ $height }};"
     wire:ignore
 >
     @if ($showToolbar)
-        <div class="flex h-12 items-center gap-2 border-b border-neutral-200 bg-neutral-50 px-3">
+        <div class="{{ $toolbarClasses }}">
             <button
                 type="button"
-                class="inline-flex h-8 w-8 items-center justify-center rounded border border-neutral-300 bg-white text-sm hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
+                class="{{ $buttonClasses }}"
                 data-pdf-action="previous"
                 aria-label="Previous page"
                 disabled
@@ -19,14 +43,14 @@
             </button>
             <button
                 type="button"
-                class="inline-flex h-8 w-8 items-center justify-center rounded border border-neutral-300 bg-white text-sm hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
+                class="{{ $buttonClasses }}"
                 data-pdf-action="next"
                 aria-label="Next page"
                 disabled
             >
                 &gt;
             </button>
-            <div class="min-w-24 text-center text-sm tabular-nums text-neutral-700">
+            <div class="{{ $pageCountClasses }}">
                 <span data-pdf-current-page>{{ $initialPage }}</span>
                 <span>/</span>
                 <span data-pdf-total-pages>0</span>
@@ -34,7 +58,7 @@
             <div class="ml-auto flex items-center gap-2">
                 <button
                     type="button"
-                    class="inline-flex h-8 w-8 items-center justify-center rounded border border-neutral-300 bg-white text-sm hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
+                    class="{{ $buttonClasses }}"
                     data-pdf-action="zoom-out"
                     aria-label="Zoom out"
                     disabled
@@ -43,7 +67,7 @@
                 </button>
                 <button
                     type="button"
-                    class="inline-flex h-8 w-8 items-center justify-center rounded border border-neutral-300 bg-white text-sm hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40"
+                    class="{{ $buttonClasses }}"
                     data-pdf-action="zoom-in"
                     aria-label="Zoom in"
                     disabled

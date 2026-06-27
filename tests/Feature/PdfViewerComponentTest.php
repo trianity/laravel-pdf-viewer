@@ -20,3 +20,29 @@ test('component sanitizes unsafe height values', function () {
     ])
         ->assertSet('height', '70vh');
 });
+
+test('component defaults theme to auto', function () {
+    Livewire::test(PdfViewer::class, [
+        'documentId' => 'document-1',
+    ])
+        ->assertSet('theme', 'auto')
+        ->assertSee('data-pdf-viewer-theme="auto"', false);
+});
+
+test('component accepts valid theme values', function (string $theme) {
+    Livewire::test(PdfViewer::class, [
+        'documentId' => 'document-1',
+        'theme' => $theme,
+    ])
+        ->assertSet('theme', $theme)
+        ->assertSee('data-pdf-viewer-theme="'.$theme.'"', false);
+})->with(['light', 'dark', 'soft']);
+
+test('component falls back to auto for invalid theme values', function () {
+    Livewire::test(PdfViewer::class, [
+        'documentId' => 'document-1',
+        'theme' => 'pastel',
+    ])
+        ->assertSet('theme', 'auto')
+        ->assertSee('data-pdf-viewer-theme="auto"', false);
+});

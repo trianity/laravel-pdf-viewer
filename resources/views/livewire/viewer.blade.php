@@ -1,15 +1,21 @@
 @php
+    $rootClasses = match ($theme) {
+        'light', 'soft' => 'w-full overflow-hidden rounded border border-neutral-200 bg-white text-neutral-900 shadow-sm [color-scheme:light]',
+        'dark' => 'w-full overflow-hidden rounded border border-neutral-800 bg-neutral-950 text-neutral-100 shadow-sm [color-scheme:dark]',
+        default => 'w-full overflow-hidden rounded border border-neutral-200 bg-white text-neutral-900 shadow-sm',
+    };
+
     $toolbarClasses = match ($theme) {
-        'light' => 'flex h-12 items-center gap-2 border-b border-neutral-200 bg-white px-3 text-neutral-900',
+        'light' => 'flex h-12 items-center gap-2 border-b border-neutral-200 bg-white px-3 text-neutral-900 shadow-sm',
         'dark' => 'flex h-12 items-center gap-2 border-b border-white/10 bg-neutral-950 px-3 text-neutral-100',
-        'soft' => 'flex h-12 items-center gap-2 border-b border-slate-200/70 bg-white/75 px-3 text-slate-800 backdrop-blur',
+        'soft' => 'flex h-12 items-center gap-2 border-b border-slate-200/80 bg-white/90 px-3 text-slate-800 shadow-sm ring-1 ring-slate-900/10 backdrop-blur',
         default => 'flex h-12 items-center gap-2 border-b border-neutral-200 bg-neutral-50 px-3 text-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100',
     };
 
     $buttonClasses = match ($theme) {
-        'light' => 'inline-flex h-8 w-8 items-center justify-center rounded border border-neutral-300 bg-white text-sm text-neutral-900 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40',
+        'light' => 'inline-flex h-8 w-8 items-center justify-center rounded border border-neutral-300 bg-white text-sm text-neutral-900 shadow-sm hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40',
         'dark' => 'inline-flex h-8 w-8 items-center justify-center rounded border border-white/15 bg-white/10 text-sm text-neutral-100 hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40',
-        'soft' => 'inline-flex h-8 w-8 items-center justify-center rounded border border-slate-300/80 bg-white/80 text-sm text-slate-800 hover:bg-white disabled:cursor-not-allowed disabled:opacity-40',
+        'soft' => 'inline-flex h-8 w-8 items-center justify-center rounded border border-slate-300 bg-white text-sm text-slate-900 shadow-sm ring-1 ring-slate-900/5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40',
         default => 'inline-flex h-8 w-8 items-center justify-center rounded border border-neutral-300 bg-white text-sm text-neutral-900 hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/10 dark:text-neutral-100 dark:hover:bg-white/15',
     };
 
@@ -22,7 +28,7 @@
 @endphp
 
 <div
-    class="w-full overflow-hidden rounded border border-neutral-200 bg-white text-neutral-900 shadow-sm"
+    class="{{ $rootClasses }}"
     data-pdf-viewer
     data-pdf-viewer-theme="{{ $theme }}"
     data-pdf-url="{{ $streamUrl }}"
@@ -31,7 +37,7 @@
     wire:ignore
 >
     @if ($showToolbar)
-        <div class="{{ $toolbarClasses }}">
+        <div class="{{ $toolbarClasses }}" data-pdf-viewer-toolbar>
             <button
                 type="button"
                 class="{{ $buttonClasses }}"

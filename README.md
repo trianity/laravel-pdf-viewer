@@ -157,6 +157,10 @@ Supported values:
 * `dark` - always uses a dark toolbar/interface.
 * `soft` - uses a subtle translucent light interface for light or pastel page backgrounds.
 
+Explicit `light`, `soft` and `dark` themes are isolated from the browser/OS color scheme as far as possible. This helps keep the viewer controls readable when the host page uses a different visual background than the global dark/light mode.
+
+The `soft` theme is recommended for light or pastel landing pages. The theme option affects only the viewer interface; it does not modify the rendered PDF page or canvas.
+
 Invalid values fall back to `auto`.
 
 ## Authorization

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Trianity\LaravelPdfViewer;
 
+use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -18,6 +19,11 @@ final class PdfViewerServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        AboutCommand::add(
+            'Trianity Laravel PDF Viewer for Laravel 13+',
+            static fn () => ['Version' => '0.1.2']
+        );
+
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'pdf-viewer');
 
         Route::prefix((string) config('pdf-viewer.route_prefix', 'pdf-viewer'))

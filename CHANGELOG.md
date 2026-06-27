@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.1.2 - Viewer Theme Isolation
+
+### Changed
+
+- Improved explicit `light`, `soft` and `dark` viewer themes with color-scheme isolation.
+- Strengthened `soft` toolbar contrast for light and pastel host page backgrounds.
+
+### Fixed
+
+- Fixed viewer controls becoming hard to see when the browser or operating system is in dark mode while the viewer is configured with a light or soft interface theme.
+
 ## v0.1.1 - Viewer Theme Option
 
 ### Added

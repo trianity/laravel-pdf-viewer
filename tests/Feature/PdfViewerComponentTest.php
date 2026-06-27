@@ -29,14 +29,39 @@ test('component defaults theme to auto', function () {
         ->assertSee('data-pdf-viewer-theme="auto"', false);
 });
 
-test('component accepts valid theme values', function (string $theme) {
+test('component accepts explicit light theme', function () {
     Livewire::test(PdfViewer::class, [
         'documentId' => 'document-1',
-        'theme' => $theme,
+        'theme' => 'light',
     ])
-        ->assertSet('theme', $theme)
-        ->assertSee('data-pdf-viewer-theme="'.$theme.'"', false);
-})->with(['light', 'dark', 'soft']);
+        ->assertSet('theme', 'light')
+        ->assertSee('data-pdf-viewer', false)
+        ->assertSee('data-pdf-viewer-theme="light"', false)
+        ->assertSee('data-pdf-viewer-toolbar', false)
+        ->assertSee('[color-scheme:light]', false);
+});
+
+test('component accepts explicit soft theme', function () {
+    Livewire::test(PdfViewer::class, [
+        'documentId' => 'document-1',
+        'theme' => 'soft',
+    ])
+        ->assertSet('theme', 'soft')
+        ->assertSee('data-pdf-viewer-theme="soft"', false)
+        ->assertSee('[color-scheme:light]', false)
+        ->assertSee('bg-white/90', false)
+        ->assertSee('ring-slate-900/10', false);
+});
+
+test('component accepts explicit dark theme', function () {
+    Livewire::test(PdfViewer::class, [
+        'documentId' => 'document-1',
+        'theme' => 'dark',
+    ])
+        ->assertSet('theme', 'dark')
+        ->assertSee('data-pdf-viewer-theme="dark"', false)
+        ->assertSee('[color-scheme:dark]', false);
+});
 
 test('component falls back to auto for invalid theme values', function () {
     Livewire::test(PdfViewer::class, [

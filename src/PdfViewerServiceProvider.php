@@ -21,7 +21,7 @@ final class PdfViewerServiceProvider extends ServiceProvider
     {
         AboutCommand::add(
             'Trianity Laravel PDF Viewer for Laravel 13+',
-            static fn () => ['Version' => '0.1.2']
+            static fn () => ['Version' => '0.1.3']
         );
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'pdf-viewer');

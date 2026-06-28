@@ -163,6 +163,21 @@ The `soft` theme is recommended for light or pastel landing pages. The theme opt
 
 Invalid values fall back to `auto`.
 
+## Tailwind CSS 4
+
+If your application uses Tailwind CSS 4, make sure Tailwind scans the package Blade views.
+
+Add this to your application CSS entrypoint, for example `resources/css/app.css`:
+
+```css
+@source "../../vendor/trianity/laravel-pdf-viewer/resources/views/**/*.blade.php";
+@source "../../vendor/trianity/laravel-pdf-viewer/src/**/*.php";
+```
+Then rebuild your frontend assets:
+```bash
+npm run build
+```
+
 ## Authorization
 
 Configure `config/pdf-viewer.php` with either a Gate ability or an authorization callback.

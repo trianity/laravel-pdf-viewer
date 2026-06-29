@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.1.4 - 2026-06-29
+
+### Fixed
+
+- Fixed responsive PDF rendering to preserve the original page aspect ratio.
+- PDF pages now fit the available viewer area without stretching or compression.
+- Zoom now works as a multiplier on top of the calculated fit-to-container scale.
+- The current page is re-rendered on viewer resize to keep the layout responsive.
+
+### Changed
+
+- Added a `data-pdf-viewport` container hook for accurate render-area measurement.
+- Updated canvas markup to avoid CSS-driven distortion.
+
 ## v0.1.3 - 2026-06-28
 
 ### Documentation

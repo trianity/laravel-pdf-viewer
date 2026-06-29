@@ -84,11 +84,17 @@
         </div>
     @endif
 
-    <div class="relative flex min-h-0 flex-1 items-start justify-center overflow-auto bg-neutral-100 p-4" style="height: {{ $showToolbar ? 'calc(100% - 3rem)' : '100%' }};">
+    <div
+        class="relative flex min-h-0 flex-1 items-start justify-center overflow-auto bg-neutral-100 p-4"
+        style="height: {{ $showToolbar ? 'calc(100% - 3rem)' : '100%' }};"
+        data-pdf-viewport
+    >
         <div class="absolute inset-0 hidden items-center justify-center bg-white/70 text-sm text-neutral-700" data-pdf-loading>
             Loading PDF
         </div>
+
         <div class="absolute inset-x-4 top-4 hidden rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800" data-pdf-error></div>
-        <canvas class="max-w-full bg-white shadow" data-pdf-canvas></canvas>
+
+        <canvas class="block max-w-full bg-white shadow" data-pdf-canvas></canvas>
     </div>
 </div>

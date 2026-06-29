@@ -17,15 +17,24 @@ class PdfViewer {
         this.currentPageEl = element.querySelector('[data-pdf-current-page]');
         this.totalPagesEl = element.querySelector('[data-pdf-total-pages]');
         this.controls = [...element.querySelectorAll('[data-pdf-action]')];
+
+        this.viewportContainer = element.querySelector('[data-pdf-viewport]');
+
         this.pdf = null;
         this.currentPage = Math.max(1, Number.parseInt(element.dataset.initialPage || '1', 10));
+
+        // Ez innentől nem abszolút PDF.js scale, hanem user zoom szorzó.
         this.scale = 1;
+
         this.rendering = false;
         this.pendingPage = null;
+        this.resizeObserver = null;
+        this.resizeTimer = null;
     }
 
     async init() {
         this.bindControls();
+        this.bindResizeObserver();
         this.setLoading(true);
 
         try {
@@ -64,6 +73,24 @@ class PdfViewer {
         });
     }
 
+    bindResizeObserver() {
+        if (!this.viewportContainer || !window.ResizeObserver) {
+            return;
+        }
+
+        this.resizeObserver = new ResizeObserver(() => {
+            window.clearTimeout(this.resizeTimer);
+
+            this.resizeTimer = window.setTimeout(() => {
+                if (this.pdf && !this.rendering) {
+                    this.renderPage(this.currentPage);
+                }
+            }, 120);
+        });
+
+        this.resizeObserver.observe(this.viewportContainer);
+    }
+
     async zoom(delta) {
         this.scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, this.scale + delta));
         await this.renderPage(this.currentPage);
@@ -82,19 +109,69 @@ class PdfViewer {
         await this.renderPage(pageNumber);
     }
 
+    getAvailableRenderSize() {
+        const container = this.viewportContainer || this.canvas.parentElement;
+
+        if (!container) {
+            return {
+                width: this.element.clientWidth,
+                height: this.element.clientHeight,
+            };
+        }
+
+        const styles = window.getComputedStyle(container);
+
+        const paddingX =
+            Number.parseFloat(styles.paddingLeft || '0') +
+            Number.parseFloat(styles.paddingRight || '0');
+
+        const paddingY =
+            Number.parseFloat(styles.paddingTop || '0') +
+            Number.parseFloat(styles.paddingBottom || '0');
+
+        return {
+            width: Math.max(1, container.clientWidth - paddingX),
+            height: Math.max(1, container.clientHeight - paddingY),
+        };
+    }
+
+    getFitScale(baseViewport) {
+        const available = this.getAvailableRenderSize();
+
+        const widthScale = available.width / baseViewport.width;
+        const heightScale = available.height / baseViewport.height;
+
+        // Alap fit: férjen be szélességben és magasságban is.
+        // Így nem torzul, hanem a kisebb illesztési arány nyer.
+        return Math.min(widthScale, heightScale);
+    }
+
     async renderPage(pageNumber) {
+        if (!this.pdf) {
+            return;
+        }
+
         this.rendering = true;
         this.setLoading(true);
 
         try {
             const page = await this.pdf.getPage(pageNumber);
-            const viewport = page.getViewport({ scale: this.scale });
+
+            const baseViewport = page.getViewport({ scale: 1 });
+            const fitScale = this.getFitScale(baseViewport);
+            const renderScale = fitScale * this.scale;
+
+            const viewport = page.getViewport({ scale: renderScale });
             const outputScale = window.devicePixelRatio || 1;
 
             this.canvas.width = Math.floor(viewport.width * outputScale);
             this.canvas.height = Math.floor(viewport.height * outputScale);
+
             this.canvas.style.width = `${Math.floor(viewport.width)}px`;
             this.canvas.style.height = `${Math.floor(viewport.height)}px`;
+
+            this.context.setTransform(1, 0, 0, 1, 0, 0);
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             await page.render({
                 canvasContext: this.context,
@@ -129,6 +206,7 @@ class PdfViewer {
 
         this.controls.forEach((control) => {
             const action = control.dataset.pdfAction;
+
             control.disabled =
                 !this.pdf ||
                 (action === 'previous' && this.currentPage <= 1) ||
